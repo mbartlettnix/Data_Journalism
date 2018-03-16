@@ -3,3 +3,108 @@
 // Students:
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
+// var svgWidth = window.innerWidth;
+// var svgHeight = window.innerHeight;
+var svgWidth = 960;
+var svgHeight = 500;
+
+var margin = {
+    top: 30,
+    right: 30,
+    bottom: 30,
+    left: 30
+};
+
+var chartWidth = svgWidth - margin.left - margin.right;
+var chartHeight = svgHeight - margin.top - margin.bottom;
+
+var svg = d3
+    .select('body')
+    .attr('class','svg-area')
+    .append('svg')
+    .attr('height',svgHeight)
+    .attr('width',svgWidth)
+    .append('g')
+    .attr("height", chartHeight)
+    .attr("width", chartWidth)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xBandScale = d3
+    .scaleLinear()
+    .range([0,chartWidth])
+    // .padding(.5);
+
+var yLinearScale = d3
+    .scaleLinear()
+    .range([chartHeight,0]);
+
+    
+// Load Data
+d3.csv('data.csv',function(error,data){
+    if (error) throw error;
+    // console.log(data)
+    data.forEach(function(element) {
+        element.Poverty = +element.Poverty;
+        element.HighSchool = +element.HighSchool;})
+        console.log(data)
+
+    xBandScale
+    // .domain([0,d3.max(data,function(response){
+    //     // console.log(response.State)
+    //     return response.Poverty
+    // })]);
+    .domain(d3.extent(data,d => d.Poverty))
+    .nice();
+   
+    yLinearScale 
+    // .domain([0,d3.max(data,function(response){
+    //     // console.log(response.State)
+    //     return response.HighSchool
+    // })]);
+    .domain(d3.extent(data,d => d.HighSchool))
+    .nice();
+
+    var thing = d3.max(data,function(response){
+        return response.Poverty});
+
+    console.log(thing);
+
+    var xaxis = d3.axisBottom(xBandScale);
+    var yaxis = d3.axisLeft(yLinearScale);
+
+    svg
+    .selectAll("circle")
+    .data(data)
+    .enter()
+        .append('circle')
+        .attr('cx', d => xBandScale(d.Poverty))
+        .attr('cy', d => yLinearScale(d.HighSchool))
+        .attr('r',10)
+        .style("stroke", "steelblue")
+        .attr("fill-opacity", .6)
+        .attr("fill", "steelblue");
+    svg
+    .selectAll("text")
+    .data(data)
+    .enter()
+        .append('text')
+        .attr('x', d => xBandScale(d.Poverty))
+        .attr('y', d => yLinearScale(d.HighSchool-.1))
+        .style('text-anchor','middle')
+        .text(d=>d.State)
+        // .attr('r',7)
+        // .attr("fill-opacity", .5)
+        .attr("fill", "white")
+        .attr("font-size",10)
+        .attr("font-family","sans-serif");
+    
+    svg
+    .append("g")
+    .attr("transform", "translate(0," + chartHeight + ")")
+    .call(xaxis);
+    
+    svg
+    .append("g")
+    .call(yaxis);
+  
+})
