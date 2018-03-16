@@ -3,16 +3,16 @@
 // Students:
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
-// var svgWidth = window.innerWidth;
-// var svgHeight = window.innerHeight;
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = window.innerWidth;
+var svgHeight = window.innerHeight;
+// var svgWidth = 960;
+// var svgHeight = 500;
 
 var margin = {
     top: 30,
     right: 30,
-    bottom: 30,
-    left: 30
+    bottom: 50,
+    left: 100
 };
 
 var chartWidth = svgWidth - margin.left - margin.right;
@@ -102,9 +102,29 @@ d3.csv('data.csv',function(error,data){
     .append("g")
     .attr("transform", "translate(0," + chartHeight + ")")
     .call(xaxis);
+
+    svg
+    .append("text")             
+    .attr("transform",
+          "translate(" + (chartWidth/2) + " ," + 
+                         (chartHeight + (margin.top * 1.5) ) + ")")
+    .style("text-anchor", "middle")
+    .text("Percentage in Poverty")
+    .attr("font-size",15)
+    .attr("font-family","sans-serif");
     
     svg
     .append("g")
     .call(yaxis);
+    svg
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - (.5*margin.left))
+    .attr("x",0 - (chartHeight / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Percentage w/out Secondary Education")
+    .attr("font-size",15)
+    .attr("font-family","sans-serif");      
   
 })
